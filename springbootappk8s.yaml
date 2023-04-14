@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: springbootapp-deployment
+spec:
+  template:
+     metadata:
+       name: springbootapp-pod
+       labels:
+         app: springbootapp
+     spec:
+         containers:
+           - name: springbootapp-image
+             image: "mhassanmanzoorsl/springbootjacoco:0.0.1"
+             ports:
+               - containerPort: 8081
+             imagePullPolicy: Always
+         imagePullSecrets:
+           - name: myregistrykey
+
+  replicas: 1
+  selector:
+    matchLabels:
+      app: springbootapp
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: springbootapp-service
+spec:
+  selector:
+    app: springbootapp
+  type: LoadBalancer  
+  ports:
+    - protocol: TCP
+      targetPort: 3000
+      port: 8081
+      nodePort: 30000
+      
+  externalIPs:
+    - "192.168.1.62"
